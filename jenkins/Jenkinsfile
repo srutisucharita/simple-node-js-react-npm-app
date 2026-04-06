@@ -14,10 +14,25 @@ pipeline {
                 sh './jenkins/scripts/test.sh'
             }
         }
-        stage('Deliver') {
+        stage('deploy to staging') {
+            when {
+                branch 'devlop'
+            }
             steps {
-                sh './jenkins/scripts/deliver.sh'
-                input message: 'Finished using the web site? (Click "Proceed" to continue)'
+                sh './jenkins/scripts/deliver.sh staging'
+            }
+        }
+        stage('Deploy to Production') {
+            when {
+                branch 'main'
+            }
+            steps {
+                input message : 'Deploy to Production?'
+                sh './jenkins/scripts/deliver.sh production'
+            }
+        }
+        stage('cleanup') {
+            steps {
                 sh './jenkins/scripts/kill.sh'
             }
         }
