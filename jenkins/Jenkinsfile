@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "sruti321/node-react-app"
         DOCKER_TAG = "latest"
-        DOCKER_CREDENTIALS = "dockerhub-creds"
+        DOCKER_CREDENTIALS = "docker-hub-credentials"
     }
 
     stages {
