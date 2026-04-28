@@ -1,48 +1,44 @@
+```groovy
 pipeline {
-agent any
+    agent any
 
-```
-stages {
-
-    stage('Clone Check') {
-        steps {
-            echo 'Repository cloned successfully!'
+    stages {
+        stage('Clone Check') {
+            steps {
+                echo 'Repository cloned successfully!'
+            }
         }
-    }
 
-    stage('Install Backend Dependencies') {
-        steps {
-            dir('backend') {
-                bat 'npm install'
+        stage('Install Backend Dependencies') {
+            steps {
+                dir('backend') {
+                    bat 'npm install'
+                }
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            steps {
+                dir('frontend') {
+                    bat 'npm install'
+                }
+            }
+        }
+
+        stage('Run Backend Tests') {
+            steps {
+                dir('backend') {
+                    bat 'npm test'
+                }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                dir('frontend') {
+                    bat 'npm test'
+                }
             }
         }
     }
-
-    stage('Install Frontend Dependencies') {
-        steps {
-            dir('frontend') {
-                bat 'npm install'
-            }
-        }
-    }
-
-    stage('Run Backend Tests') {
-        steps {
-            dir('backend') {
-                bat 'npm test'
-            }
-        }
-    }
-
-    stage('Run Frontend Tests') {
-        steps {
-            dir('frontend') {
-                bat 'npm test'
-            }
-        }
-    }
-
-}
-```
-
 }
