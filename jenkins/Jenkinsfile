@@ -23,5 +23,21 @@ pipeline {
                 }
             }
         }
+
+        stage('Run Backend Tests') {
+            steps {
+                dir('backend') {
+                    bat 'npm test'
+                }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                dir('frontend') {
+                    bat 'npm test -- --watchAll=false'
+                }
+            }
+        }
     }
 }
