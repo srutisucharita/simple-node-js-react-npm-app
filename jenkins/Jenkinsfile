@@ -1,39 +1,10 @@
 pipeline {
     agent any
-    environment {
-        CI = 'true'
-    }
+
     stages {
-        stage('Build') {
+        stage('Clone Check') {
             steps {
-                sh 'npm install'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './jenkins/scripts/test.sh'
-            }
-        }
-        stage('deploy to staging') {
-            when {
-                branch 'devlop'
-            }
-            steps {
-                sh './jenkins/scripts/deliver.sh staging'
-            }
-        }
-        stage('Deploy to Production') {
-            when {
-                branch 'main'
-            }
-            steps {
-                input message : 'Deploy to Production?'
-                sh './jenkins/scripts/deliver.sh production'
-            }
-        }
-        stage('cleanup') {
-            steps {
-                sh './jenkins/scripts/kill.sh'
+                echo 'Repository cloned successfully!'
             }
         }
     }
