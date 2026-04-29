@@ -1,53 +1,45 @@
 pipeline {
     agent any
 
-    environment {
-        APP_NAME = "my-app"
-    }
-
     stages {
 
-        stage('Build') {
+        stage('Install Dependencies') {
             steps {
-                echo "Building application..."
-                sh 'echo build step here'
+                bat 'npm install'
             }
         }
 
         stage('Test') {
             steps {
-                echo "Running tests..."
-                sh 'echo test step here'
+                bat 'npm test'
             }
         }
 
-        stage('Deploy to Staging') {
+        stage('Build') {
+            steps {
+                bat 'npm run build'
+            }
+        }
+
+        stage('Deploy - Staging') {
             when {
                 branch 'develop'
             }
             steps {
-                echo "Deploying to STAGING environment"
-                sh './deploy.sh staging'
+                echo "Deploying to STAGING"
+                bat 'echo staging deployment'
             }
         }
 
-        stage('Deploy to Production') {
+        stage('Deploy - Production') {
             when {
                 branch 'main'
             }
             steps {
-                echo "Deploying to PRODUCTION environment"
-                sh './deploy.sh production'
+                input message: "Approve production deployment?"
+                echo "Deploying to PRODUCTION"
+                bat 'echo production deployment'
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Pipeline succeeded for branch ${env.BRANCH_NAME}"
-        }
-        failure {
-            echo "Pipeline failed"
         }
     }
 }
