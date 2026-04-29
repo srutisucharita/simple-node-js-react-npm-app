@@ -2,85 +2,52 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "sruti321/node-react-app"
-        DOCKER_TAG = "latest"
-        DOCKER_CREDENTIALS = "docker-hub-credentials"
+        APP_NAME = "my-app"
     }
 
     stages {
-        stage('Clone Check') {
+
+        stage('Build') {
             steps {
-                echo 'Repository cloned successfully!'
+                echo "Building application..."
+                sh 'echo build step here'
             }
         }
 
-        stage('Install Backend Dependencies') {
+        stage('Test') {
             steps {
-                dir('backend') {
-                    bat 'npm install'
-                }
+                echo "Running tests..."
+                sh 'echo test step here'
             }
         }
 
-        stage('Install Frontend Dependencies') {
+        stage('Deploy to Staging') {
+            when {
+                branch 'develop'
+            }
             steps {
-                dir('frontend') {
-                    bat 'npm install'
-                }
+                echo "Deploying to STAGING environment"
+                sh './deploy.sh staging'
             }
         }
 
-        stage('Run Backend Tests') {
-            steps {
-                dir('backend') {
-                    bat 'npm test'
-                }
+        stage('Deploy to Production') {
+            when {
+                branch 'main'
             }
-        }
-
-        stage('Run Frontend Tests') {
             steps {
-                dir('frontend') {
-                    bat 'npm test'
-                }
-            }
-        }
-
-        stage('Build Frontend') {
-            steps {
-                dir('frontend') {
-                    bat 'npm run build'
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                bat "docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% ."
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('', DOCKER_CREDENTIALS) {
-                        bat "docker push %DOCKER_IMAGE%:%DOCKER_TAG%"
-                    }
-                }
+                echo "Deploying to PRODUCTION environment"
+                sh './deploy.sh production'
             }
         }
     }
 
     post {
         success {
-            mail to: 'lianasamal5@gmail.com',
-                 subject: "SUCCESS: Jenkins Pipeline",
-                 body: "Pipeline executed successfully!"
+            echo "Pipeline succeeded for branch ${env.BRANCH_NAME}"
         }
         failure {
-            mail to: 'lianasamal5@gmail.com',
-                 subject: "FAILURE: Jenkins Pipeline",
-                 body: "Pipeline failed. Check Jenkins logs."
+            echo "Pipeline failed"
         }
     }
 }
