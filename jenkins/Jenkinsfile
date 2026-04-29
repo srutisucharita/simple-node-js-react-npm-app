@@ -1,24 +1,40 @@
 pipeline {
     agent any
-    environment {
-        CI = 'true'
-    }
+
     stages {
-        stage('Build') {
+
+        stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
+
         stage('Test') {
             steps {
-                sh './jenkins/scripts/test.sh'
+                bat 'npm test'
             }
         }
-        stage('Deliver') {
+
+        stage('Build') {
             steps {
-                sh './jenkins/scripts/deliver.sh'
-                input message: 'Finished using the web site? (Click "Proceed" to continue)'
-                sh './jenkins/scripts/kill.sh'
+                bat 'npm run build'
+            }
+        }
+
+        stage('Deploy - Staging') {
+            when { branch 'develop' }
+            steps {
+                echo "Deploying to STAGING"
+                bat 'echo staging deployment'
+            }
+        }
+
+        stage('Deploy - Production') {
+            when { branch 'main' }
+            steps {
+                input message: "Approve production deployment?"
+                echo "Deploying to PRODUCTION"
+                bat 'echo production deployment'
             }
         }
     }
