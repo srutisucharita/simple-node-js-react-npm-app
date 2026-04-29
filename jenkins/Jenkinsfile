@@ -12,9 +12,10 @@ pipeline {
 
                 stage('Build') {
                     steps {
-                        echo 'Building...'
+                      echo 'Building...'
+                         sh 'exit 1'   // force failure
+                         }
                     }
-                }
 
                 stage('Test') {
                     steps {
